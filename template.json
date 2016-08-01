@@ -1,0 +1,70 @@
+{
+    "push": {
+      "name": "tapask09/example6",
+      "vcs": false
+    },
+    "variables": {
+        "atlas_username": "tapask09",
+        "atlas_name": "example6"
+    },
+    "provisioners": [
+        {
+            "type": "shell",
+            "scripts": [
+                "scripts/base.sh",
+                "scripts/virtualbox.sh",
+                "scripts/vagrant.sh"
+            ],
+            "override": {
+                "virtualbox-iso": {
+                    "execute_command": "echo 'vagrant'|sudo -S bash '{{.Path}}'"
+                }
+            }
+        }
+    ],
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "boot_command": [
+                "<esc><esc><enter><wait>",
+                "/install/vmlinuz noapic preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+                "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+                "hostname={{ .Name }} ",
+                "fb=false debconf/frontend=noninteractive ",
+                "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false ",
+                "initrd=/install/initrd.gz -- <enter>"
+            ],
+            "headless": true,
+            "boot_wait": "10s",
+            "disk_size": 20480,
+            "guest_os_type": "Centos",
+            "http_directory": "http",
+            "iso_checksum": "b8a2950f87858f846d1381edef3f0e3d6624631659eb6de8bc8e9da09f1b19ad",
+            "iso_checksum_type": "sha256",
+            "iso_url": "http://mirror.nsc.liu.se/centos-store/6.3/isos/x86_64/CentOS-6.3-x86_64-minimal.iso",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_port": 22,
+            "ssh_wait_timeout": "10000s",
+            "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'vagrant'|sudo -S bash 'shutdown.sh'",
+            "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+            "virtualbox_version_file": ".vbox_version"
+        }
+    ],
+    "post-processors": [
+        [{
+            "type": "vagrant",	
+            "keep_input_artifact": false
+        },
+        {
+            "type": "atlas",
+            "only": ["virtualbox-iso"],
+            "artifact": "tapask09/example6",
+            "artifact_type": "vagrant.box",
+            "metadata": {
+                "provider": "virtualbox",
+                "version": "0.0.1"
+            }
+        }]
+    ]
+}
