@@ -37,7 +37,7 @@
             "headless": true,
             "boot_wait": "10s",
             "disk_size": 20480,
-            "guest_os_type": "other",
+            "guest_os_type": "Linux_64",
             "http_directory": "http",
             "iso_checksum": "b8a2950f87858f846d1381edef3f0e3d6624631659eb6de8bc8e9da09f1b19ad",
             "iso_checksum_type": "sha256",
